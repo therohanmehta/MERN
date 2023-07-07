@@ -1,64 +1,69 @@
 import { useEffect, useState } from "react";
 
 import "./App.css";
+// import { response } from "express";
 
 function App() {
-  const [fetchData, setFetchData] = useState([]);
-  const [data, setData] = useState([]);
+  const [form, setForm] = useState({});
+  const [fetchedData, setFetchedData] = useState([]);
   async function handleForm(e) {
     e.preventDefault();
-    const response = await fetch("http://localhost:8080/demo", {
+    // await fetch('http://localhost:8080/form')
+    // .then((res)=>res.text())
+    // .then((result)=>console.log(result))
+
+   const response= await fetch("http://localhost:8080/form", {
       method: "POST",
-      body: JSON.stringify(data),
+      body: JSON.stringify(form),
       headers: {
         "Content-Type": "application/json",
       },
     });
-    const fetchedData = await response.json();
-    console.log(fetchedData);
+
   }
 
-  useEffect(()=>{
+const showData=()=>{
+fetch('http://localhost:8080/form')
+.then((res)=>res.json())
+.then((data)=>setFetchedData(data))
 
-    fetch("http://localhost:8080/demo")
-  .then((res)=>res.json())
-  .then((newData)=>setFetchData([...newData]))
-})
- 
+}
+showData()
 
   return (
     <>
-      <form action="submit" onSubmit={handleForm}>
-        <h1>{JSON.stringify(data)}</h1>
-        <label htmlFor="username">Username</label>
+      {JSON.stringify(fetchedData, null, 2)}
+
+      <form onSubmit={handleForm}>
+        Name{" "}
         <input
           type="text"
-          name="username"
+          name="name"
           onChange={(e) => {
-            setData({ ...data, [e.target.name]: e.target.value });
+            setForm({ ...form, [e.target.name]: e.target.value });
           }}
-        />
-        <br />
-        <br />
-        <label htmlFor="password">Password</label>
+        />{" "}
+        <hr />
+        Age{" "}
         <input
-          type="text"
+          type="number"
+          name="age"
+          onChange={(e) => {
+            setForm({ ...form, [e.target.name]: e.target.value });
+          }}
+        />{" "}
+        <hr />
+        Password{" "}
+        <input
+          type="password"
           name="password"
           onChange={(e) => {
-            setData({ ...data, [e.target.name]: e.target.value });
+            setForm({ ...form, [e.target.name]: e.target.value });
           }}
-        />
-        <br />
-        <br />
+        />{" "}
+        <hr />
         <input type="submit" value="Submit" />
       </form>
-      <hr />
-      {fetchData.map((ele, ind) => {
-  return <li key={ind}>{ele.username}</li>;
-})}
-
-
-
     </>
   );
 }
